@@ -1,0 +1,55 @@
+name: Pyfony reusable build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Install Miniforge
+        uses: conda-incubator/setup-miniconda@v2.1.1
+        with:
+          miniforge-version: 4.10.3-6
+
+      - name: cache venv
+        id: cache-venv
+        uses: actions/cache@v2
+        with:
+          path: |
+            .venv
+            ~/.poetry/env
+          key: ${{ runner.os }}-env-${{ hashFiles('**/poetry.lock') }}
+
+      - name: setup
+        run: |
+          export SHELL=$SHELL # for python to be able to access the bash version
+          ./env-init.sh -y --verbose
+
+      - name: linting
+        run: |
+          eval "$(conda shell.bash hook)"
+          conda activate $PWD/.venv
+          source ~/.poetry/env
+          poe black-check
+          poe flake8
+          poe pylint
+          sed -i "s,/app/,,g" .pyre_configuration
+          pyre check
+
+      - name: crlf
+        run: |
+          eval "$(conda shell.bash hook)"
+          conda activate $PWD/.venv
+          ./check-crlf.sh
+
+      - name: tests
+        run: |
+          eval "$(conda shell.bash hook)"
+          conda activate $PWD/.venv
+          ./run_tests.sh

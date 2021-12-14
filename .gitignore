@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*egg-info
+.venv
+dist/*
+build
+.DS_Store
+*-checkpoint.ipynb
+*-checkpoint.py
+.idea/
+.env
+!.gitkeep
