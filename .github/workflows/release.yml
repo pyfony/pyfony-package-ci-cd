@@ -28,15 +28,6 @@ jobs:
         run: echo "${{ steps.extract_version.outputs.replaced }}"
       - name: Show extracted prerelease
         run: echo "${{ steps.extract_prerelease.outputs.replaced }}"
-      - name: Extract description
-        id: extract_description
-        uses: frabert/replace-string-action@v1.1
-        with:
-          pattern: '^bump version to [^\n]+[\n]+'
-          string: ${{ github.event.head_commit.message }}
-          replace-with: ''
-      - name: Show extracted description
-        run: echo "${{ steps.extract_description.outputs.replaced }}"
       - name: Install Poetry
         uses: snok/install-poetry@v1.1.1
         with:
@@ -58,15 +49,14 @@ jobs:
           echo "WHEEL_NAME=$(ls -1 dist/ | grep -e "\.whl$" | sort -r | head -n 1)" >> $GITHUB_ENV
       - name: Create GitHub release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: 'v${{ steps.extract_version.outputs.replaced }}'
-          release_name: 'Release ${{ steps.extract_version.outputs.replaced }}'
-          body: '${{ steps.extract_description.outputs.replaced }}'
+          name: 'Release ${{ steps.extract_version.outputs.replaced }}'
+          generate_release_notes: true
           draft: false
           prerelease: ${{ steps.extract_prerelease.outputs.replaced != '' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Release Asset
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
