@@ -2,6 +2,9 @@ name: Pyfony reusable release
 
 on:
   workflow_call:
+    secrets:
+      PYPI_PUBLISH:
+        required: true
 
 jobs:
   release:
