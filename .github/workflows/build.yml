@@ -37,7 +37,6 @@ jobs:
           conda activate $PWD/.venv
           source ~/.poetry/env
           poe black-check
-          poe flake8
           poe pylint
           sed -i "s,/app/,,g" .pyre_configuration
           pyre check
