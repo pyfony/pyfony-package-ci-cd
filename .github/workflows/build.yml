@@ -51,4 +51,12 @@ jobs:
         run: |
           eval "$(conda shell.bash hook)"
           conda activate $PWD/.venv
+
+          export SPARK_HOME=$(python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/pyspark
+          export PYSPARK_PYTHON=$PWD/.venv/bin/python
+          export PYSPARK_DRIVER_PYTHON=$PWD/.venv/bin/python
+
+          chmod +x run_tests.sh
+          chmod +x .venv/ -R
+
           ./run_tests.sh
