@@ -16,6 +16,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2.1.1
         with:
           miniforge-version: 4.10.3-6
+          python-version: 3.8
 
       - name: cache venv
         id: cache-venv
