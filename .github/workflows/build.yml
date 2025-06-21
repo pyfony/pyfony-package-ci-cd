@@ -19,7 +19,7 @@ jobs:
 
       - name: cache venv
         id: cache-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .venv
